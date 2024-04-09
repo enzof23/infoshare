@@ -1,6 +1,7 @@
 ---
 import Layout from "../layouts/Layout.astro";
 import GetMy from "../components/GetMy";
+import Form from "../components/Form";
 ---
 
 <Layout
@@ -35,26 +36,7 @@ import GetMy from "../components/GetMy";
         </h6>
       </div>
 
-      <div
-        class="w-full max-w-lg flex flex-col gap-1 bg-accent-dark/30 border border-accent/30 shadow-purple rounded-lg px-4 py-8 sm:px-8 sm:py-10"
-      >
-        <p
-          class="text-accent-light/90 uppercase text-xs tracking-wider lg:text-sm lg:font-semibold"
-        >
-          enter your email:
-        </p>
-
-        <input
-          type="email"
-          name="email"
-          class="bg-accent-dark/30 border-accent/80 border rounded-sm text-accent-light outline-none p-1 sm:p-2 focus:border-accent-light/80"
-        />
-
-        <button
-          class="mt-3 bg-accent rounded-sm uppercase text-accent-light font-medium p-2 text-sm active:bg-accent-secondary focus:bg-accent-secondary focus:outline-accent active:translate-y-[2px]"
-          >submit</button
-        >
-      </div>
+      <Form client:load />
     </div>
 
     <div>
