@@ -1,45 +1,72 @@
-import { useRef, useState, type FormEvent } from "react";
+import { useState, type FormEvent } from "react";
 import emailjs from "@emailjs/browser";
 
 const SERVICE_ID = import.meta.env.PUBLIC_EMAILJS_SERVICE_ID;
 const TEMPLATE_ID = import.meta.env.PUBLIC_EMAILJS_TEMPLATE_ID;
-const PUBLIC_KEY = import.meta.env.PUBLIC_EMAILJS_PUBLIC_KEY;
+const PUBLIC_KEY = import.meta.env.PUBLIC_EMAILJS_KEY;
 
 type FormStatus = "default" | "error" | "success";
 
 export default function () {
-  const formRef = useRef<HTMLFormElement>(null);
-
   const [sending, setSending] = useState<boolean>(false);
-  const [status, setStatus] = useState<FormStatus>("default");
+  const [formStatus, setFormStatus] = useState<FormStatus>("default");
 
-  function sendEmail(e: FormEvent) {
+  async function sendEmail(e: FormEvent<HTMLFormElement>) {
     e.preventDefault();
+    setSending(true);
 
-    // setSending(true);
-    const form = formRef.current;
+    formStatus !== "default" && setFormStatus("default");
 
-    if (form) {
-      emailjs
-        .sendForm(SERVICE_ID, TEMPLATE_ID, form, { publicKey: PUBLIC_KEY })
-        .then(
-          (result) => {
-            console.log(`Result: ${result.text}`);
-            console.log(form);
-          },
-          (error) => {
-            console.log(`Error: ${error.text}`);
-          }
+    const formData = new FormData(e.currentTarget);
+
+    try {
+      if (formData) {
+        const { status, text } = await emailjs.sendForm(
+          SERVICE_ID,
+          TEMPLATE_ID,
+          e.currentTarget,
+          PUBLIC_KEY
         );
+
+        if (status === 200) {
+          setSending(false);
+          setFormStatus("success");
+        } else {
+          throw new Error(`Error ${status}: ${text}`);
+        }
+      }
+    } catch (error) {
+      console.log(error);
+      setSending(false);
+      setFormStatus("error");
     }
+  }
+
+  if (formStatus === "success") {
+    return (
+      <FormWrapper>
+        <div className="flex flex-col gap-3 text-accent-light/90">
+          <p className="text-lg font-medium leading-10">
+            Thank you for your interest !
+          </p>
+          <p>
+            You should receive an email shortly with all my relevant links and
+            information about myself.
+          </p>
+
+          <p className="text-sm text-accent-light/50">
+            If you can't find the email, make sure to check your spam!
+          </p>
+        </div>
+      </FormWrapper>
+    );
   }
 
   return (
     <FormWrapper>
-      <form ref={formRef} onSubmit={sendEmail} className="flex flex-col gap-4">
+      <form onSubmit={sendEmail} className="flex flex-col gap-4">
         <InputWrapper name={"name"}>
           <input
-            required
             type="name"
             name="name"
             className="bg-accent-dark/30 border-accent/80 border rounded-sm text-accent-light outline-none p-1 sm:p-2 focus:border-accent-light/80"
@@ -55,12 +82,17 @@ export default function () {
           />
         </InputWrapper>
 
-        <button
+        {formStatus === "error" && (
+          <p className="text-sm text-red-700">
+            An error has occured, please try again
+          </p>
+        )}
+
+        <input
           type="submit"
+          value={sending ? "sending..." : "submit"}
           className="bg-accent rounded-sm uppercase text-accent-light font-medium p-3 text-sm transition-all duration-150 hover:bg-accent/80 active:bg-accent-secondary active:outline-accent active:translate-y-[2px]"
-        >
-          {sending ? "sending" : "submit"}
-        </button>
+        />
       </form>
     </FormWrapper>
   );
