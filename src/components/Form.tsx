@@ -91,7 +91,7 @@ export default function () {
         <input
           type="submit"
           value={sending ? "sending..." : "submit"}
-          className="bg-accent rounded-sm uppercase text-accent-light font-medium p-3 text-sm transition-all duration-150 hover:bg-accent/80 active:bg-accent-secondary active:outline-accent active:translate-y-[2px]"
+          className="cursor-pointer bg-accent rounded-sm uppercase text-accent-light font-medium p-3 text-sm transition-all duration-150 hover:bg-accent/80 active:bg-accent-secondary active:outline-accent active:translate-y-[2px]"
         />
       </form>
     </FormWrapper>
@@ -113,14 +113,15 @@ const InputWrapper = ({
   name: string;
   children: JSX.Element;
 }) => {
+  const span = name === "name" ? "optional" : "required";
   return (
     <div className="flex flex-col">
       <label
         htmlFor={name}
         className="text-accent-light/90 uppercase text-xs tracking-wider lg:text-sm lg:font-semibold"
       >
-        {name}
-        {name === "email" && <span className="text-red-600">*</span>}:
+        {name}{" "}
+        <span className="text-[9px] font-light text-accent-light/80">{`(${span})`}</span>
       </label>
 
       {children}
