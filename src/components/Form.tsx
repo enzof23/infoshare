@@ -14,7 +14,6 @@ export default function () {
   async function sendEmail(e: FormEvent<HTMLFormElement>) {
     e.preventDefault();
     setSending(true);
-
     formStatus !== "default" && setFormStatus("default");
 
     const formData = new FormData(e.currentTarget);
@@ -88,11 +87,13 @@ export default function () {
           </p>
         )}
 
-        <input
+        <button
           type="submit"
-          value={sending ? "sending..." : "submit"}
-          className="cursor-pointer bg-accent rounded-sm uppercase text-accent-light font-medium p-3 text-sm transition-all duration-150 hover:bg-accent/80 active:bg-accent-secondary active:outline-accent active:translate-y-[2px]"
-        />
+          disabled={sending}
+          className="cursor-pointer bg-accent rounded-sm uppercase text-accent-light font-medium p-3 text-sm transition-all duration-150 hover:bg-accent/80 active:bg-accent-secondary active:outline-accent active:translate-y-[2px] disabled:pointer-events-none"
+        >
+          {sending ? "sending..." : "submit"}
+        </button>
       </form>
     </FormWrapper>
   );
